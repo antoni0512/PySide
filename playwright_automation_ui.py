@@ -306,21 +306,28 @@ class PanelHeader(QWidget):
 
 
 class StyledButton(QPushButton):
+    @staticmethod
+    def _darken(hex_colour: str, factor: float = 0.82) -> str:
+        h = hex_colour.lstrip("#")
+        r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+        return f"#{int(r*factor):02X}{int(g*factor):02X}{int(b*factor):02X}"
+
     def __init__(self, text: str, accent: str = TEAL, parent=None):
         super().__init__(text, parent)
         self._accent = accent
         self.setMinimumHeight(34)
         self.setCursor(Qt.PointingHandCursor)
-        a = accent
+        a_hover = self._darken(accent, 0.82)
+        a_press = self._darken(accent, 0.65)
         self.setStyleSheet(f"""
             QPushButton {{
-                background: {a}; color: #FFFFFF;
+                background: {accent}; color: #FFFFFF;
                 border: none; border-radius: 5px;
                 padding: 0 18px; font-size: 12px; font-weight: 600;
                 font-family: {FONT_UI};
             }}
-            QPushButton:hover   {{ background: {a}DD; }}
-            QPushButton:pressed {{ background: {a}AA; }}
+            QPushButton:hover   {{ background: {a_hover}; color: #FFFFFF; }}
+            QPushButton:pressed {{ background: {a_press}; color: #FFFFFF; }}
             QPushButton:disabled {{ background: {PANEL_HDR}; color: {TEXT_MUTED}; }}
         """)
 
